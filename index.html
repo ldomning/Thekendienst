@@ -1,180 +1,39 @@
 <!doctype html>
 <html lang="de">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#12372a">
-  <title>Thekendienst</title>
-  <style>
-    :root{--green:#12372a;--green2:#436850;--cream:#fbf8ef;--card:#fff;--gold:#e9c46a;--red:#a33;--muted:#68756e;--line:#dfe7e1}
-    *{box-sizing:border-box} body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;background:linear-gradient(160deg,#edf5ef 0%,var(--cream) 60%);color:#1f2924;min-height:100vh}
-    .wrap{width:min(900px,calc(100% - 28px));margin:0 auto;padding:34px 0 56px}
-    header{background:var(--green);color:white;border-radius:22px;padding:28px;box-shadow:0 16px 40px #12372a22}
-    h1{margin:0 0 8px;font-size:clamp(2rem,6vw,3.2rem);line-height:1}.lead{font-size:1.08rem;margin:0;opacity:.9}
-    .info,.statusbox{background:#fff;border:1px solid var(--line);border-radius:18px;padding:20px;margin:18px 0}
-    .info h2{margin:0 0 10px;font-size:1.2rem}.info ul{margin:8px 0 0;padding-left:20px;line-height:1.65}
-    .meta{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}.pill{background:#ffffff18;border:1px solid #ffffff30;padding:7px 11px;border-radius:999px;font-size:.92rem}
-    #status{display:flex;align-items:center;gap:8px;color:var(--muted);font-size:.93rem}.dot{width:9px;height:9px;border-radius:50%;background:#d49a00}.dot.ok{background:#2b9348}.dot.bad{background:#c43d3d}
-    .grid{display:grid;gap:14px}.shift{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:18px;box-shadow:0 6px 18px #12372a0d}
-    .shifthead{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:13px}.time{font-size:1.18rem;font-weight:750}.count{color:var(--muted);font-size:.9rem}
-    .slots{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.slot{min-height:86px;border:1.5px dashed #b9cbbf;border-radius:14px;padding:12px;display:flex;flex-direction:column;justify-content:center;gap:8px;background:#fbfdfb}
-    .slot.taken{border-style:solid;background:#f0f6f2}.name{font-weight:700;overflow-wrap:anywhere}.small{font-size:.82rem;color:var(--muted)}
-    button{font:inherit;border:0;border-radius:10px;padding:10px 12px;cursor:pointer;font-weight:700}button:disabled{opacity:.55;cursor:not-allowed}.join{background:var(--green);color:#fff}.leave{background:#f8e4e4;color:#812727}.secondary{background:#eef2ef;color:#24342b}
-    dialog{border:0;border-radius:18px;padding:0;width:min(440px,calc(100% - 30px));box-shadow:0 25px 80px #0005}dialog::backdrop{background:#102019aa;backdrop-filter:blur(2px)}.modal{padding:24px}.modal h2{margin:0 0 8px}.modal p{color:var(--muted)}label{display:block;font-weight:700;margin:18px 0 6px}input{width:100%;font:inherit;border:1px solid #bfcac3;border-radius:11px;padding:13px;outline:none}input:focus{border-color:var(--green);box-shadow:0 0 0 3px #43685022}.actions{display:flex;justify-content:flex-end;gap:9px;margin-top:20px}
-    .setup{display:none;background:#fff7db;border:1px solid #eed38b;border-radius:16px;padding:18px;margin:18px 0}.setup code{background:#fff;padding:2px 5px;border-radius:5px}.footer{text-align:center;color:var(--muted);font-size:.85rem;margin-top:22px}
-    @media(max-width:560px){.wrap{width:min(100% - 20px,900px);padding-top:16px}header{padding:23px 20px;border-radius:18px}.slots{grid-template-columns:1fr}.slot{min-height:76px}}
-  </style>
-</head>
-<body>
-<main class="wrap">
-  <header>
-    <h1>🍻 Thekendienst</h1>
-    <p class="lead">Gemeinsam sorgen wir dafür, dass an der Theke alles entspannt läuft.</p>
-    <div class="meta"><span class="pill">1,5 Stunden</span><span class="pill">2 Personen je Schicht</span><span class="pill">Freie Getränke</span></div>
-  </header>
-
-  <section class="info">
-    <h2>Was gehört zum Dienst?</h2>
-    <ul>
-      <li>Getränke ausgeben und bei Bedarf nachfüllen</li>
-      <li>Nach leeren Flaschen und benutzten Gläsern schauen</li>
-      <li>Spülmaschine befüllen, starten und ausräumen</li>
-      <li>Die Theke ordentlich halten und insgesamt ein wenig die Augen offen halten</li>
-      <li>Die nächste Schicht kurz einweisen und offene Punkte übergeben</li>
-    </ul>
-    <p><strong>Bitte tragt euch selbst ein.</strong> Falls etwas dazwischenkommt, könnt ihr euch über dasselbe Gerät wieder austragen.</p>
-  </section>
-
-  <section class="setup" id="setup">
-    <strong>Firebase ist noch nicht eingerichtet.</strong><br>
-    Trage unten im Quelltext deine Werte in <code>firebaseConfig</code> ein und aktiviere in Firebase „Anonymous Authentication“ sowie Cloud Firestore.
-  </section>
-
-  <section class="statusbox"><div id="status"><span class="dot"></span><span>Verbindung wird hergestellt …</span></div></section>
-  <section class="grid" id="shiftGrid" aria-live="polite"></section>
-  <p class="footer">Die Einträge werden online gespeichert und auf allen Geräten live aktualisiert.</p>
-</main>
-
-<dialog id="joinDialog">
-  <form method="dialog" class="modal" id="joinForm">
-    <h2>Für Schicht eintragen</h2>
-    <p id="dialogTime"></p>
-    <label for="personName">Dein Name</label>
-    <input id="personName" name="personName" maxlength="50" autocomplete="name" required placeholder="Vor- und Nachname">
-    <div class="actions"><button value="cancel" class="secondary" type="button" id="cancelBtn">Abbrechen</button><button value="default" class="join" type="submit" id="saveBtn">Eintragen</button></div>
-  </form>
-</dialog>
-
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#163a2d">
+<title>Immer noch wie gestern – 07.11.2026</title>
+<style>
+:root{--g:#163a2d;--g2:#315b49;--bg:#f4f7f2;--card:#fff;--line:#dce5dd;--muted:#66736b;--red:#9a3535;--blue:#355d9a}*{box-sizing:border-box}body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;background:linear-gradient(160deg,#eaf3ed,#faf8f1);color:#202a25}.wrap{width:min(920px,calc(100% - 24px));margin:auto;padding:18px 0 50px}.hero{background:var(--g);color:#fff;padding:26px;border-radius:22px;box-shadow:0 14px 35px #163a2d20}.hero h1{font-size:clamp(2rem,8vw,3.5rem);margin:0 0 8px;line-height:1.02}.hero p{margin:5px 0;opacity:.92}.meta{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}.pill{border:1px solid #ffffff45;background:#ffffff12;padding:8px 11px;border-radius:999px}.intro,.panel,.status{background:#fff;border:1px solid var(--line);border-radius:18px;padding:20px;margin:14px 0}.intro h2,.panel h2{margin:0 0 8px}.nav{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:14px 0}.nav a{text-decoration:none;color:#fff;background:var(--g);border-radius:15px;padding:14px 10px;text-align:center;font-weight:750}.sub{color:var(--muted);margin-top:0}.grid{display:grid;gap:12px}.shift,.helper{border:1px solid var(--line);border-radius:15px;padding:15px;background:#fbfdfb}.head{display:flex;justify-content:space-between;gap:10px;align-items:center}.time{font-weight:800}.count{font-size:.88rem;color:var(--muted)}.slots{display:grid;grid-template-columns:repeat(2,1fr);gap:9px;margin-top:10px}.slot{border:1.5px dashed #b8c8bd;border-radius:12px;min-height:78px;padding:10px;display:flex;flex-direction:column;justify-content:center;gap:6px}.slot.taken{border-style:solid;background:#eff6f1}.name{font-weight:750}.small{font-size:.82rem;color:var(--muted)}button,.linkbtn{font:inherit;border:0;border-radius:10px;padding:10px 12px;font-weight:750;cursor:pointer;text-decoration:none;display:inline-block}.join{background:var(--g);color:#fff}.leave{background:#f7e2e2;color:#7d2828}.secondary{background:#edf1ee;color:#26342c}.external{background:var(--blue);color:#fff}.helper-list{display:flex;flex-wrap:wrap;gap:7px;margin:12px 0}.chip{background:#edf4ef;border-radius:999px;padding:7px 10px}.actions{display:flex;gap:8px;flex-wrap:wrap}.status{font-size:.92rem;color:var(--muted)}.dot{display:inline-block;width:9px;height:9px;border-radius:50%;background:#d29b27;margin-right:7px}.dot.ok{background:#3a9b50}.dot.bad{background:#c34b4b}.tasks{line-height:1.6;padding-left:20px}.note{background:#f5f2e8;padding:12px;border-radius:12px;margin-top:12px}.footer{text-align:center;color:var(--muted);font-size:.85rem;margin-top:20px}dialog{border:0;border-radius:18px;padding:0;width:min(440px,calc(100% - 28px));box-shadow:0 25px 80px #0005}dialog::backdrop{background:#102019aa}.modal{padding:22px}.modal h2{margin-top:0}label{display:block;font-weight:700;margin:15px 0 6px}input{width:100%;font:inherit;padding:12px;border:1px solid #bac7be;border-radius:10px}.modal-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:18px}.setup{background:#fff1c7;border:1px solid #e8c86e;border-radius:14px;padding:14px;margin:14px 0;display:none}@media(max-width:620px){.nav{grid-template-columns:1fr}.slots{grid-template-columns:1fr}.hero{padding:22px 18px}.wrap{width:calc(100% - 18px)}}
+</style></head><body><main class="wrap">
+<section class="hero"><h1>🎉 Immer noch wie gestern</h1><p><strong>07.11.2026 · Bootshaus Oberkassel</strong></p><p>Damit wir gemeinsam einen entspannten Abend haben, freuen wir uns an ein paar Stellen über Unterstützung.</p><div class="meta"><span class="pill">🍻 Theke</span><span class="pill">💪 Auf- und Abbau</span><span class="pill">🥗 Buffet</span></div></section>
+<section class="intro"><h2>Wobei möchtest du helfen?</h2><p class="sub">Einfach den passenden Bereich auswählen und selbst eintragen.</p><div class="nav"><a href="#theke">🍻 Thekendienst</a><a href="#helfer">💪 Auf- & Abbau</a><a href="#buffet">🥗 Buffet</a></div></section>
+<div class="setup" id="setup"><strong>Firebase-Konfiguration fehlt.</strong> Übernimm in <code>firebaseConfig</code> die sechs Werte aus deiner derzeit funktionierenden index.html.</div>
+<div class="status" id="status"><span class="dot"></span>Verbindung wird hergestellt …</div>
+<section class="panel" id="theke"><h2>🍻 Thekendienst</h2><p class="sub"><strong>1,5 Stunden · 2 Personen je Schicht</strong></p><ul class="tasks"><li>Getränke ausgeben und bei Bedarf nachfüllen</li><li>Nach leeren Flaschen und benutzten Gläsern schauen</li><li>Spülmaschine befüllen, starten und ausräumen</li><li>Die Theke ordentlich halten und insgesamt ein wenig die Augen offen halten</li><li>Die nächste Schicht kurz einweisen und offene Punkte übergeben</li></ul><p class="note"><strong>Bitte tragt euch selbst ein.</strong> Falls etwas dazwischenkommt, könnt ihr euch über dasselbe Gerät wieder austragen.</p><div class="grid" id="shiftGrid"></div></section>
+<section class="panel" id="helfer"><h2>💪 Auf- & Abbau</h2><p class="sub">Hier kannst du dich unkompliziert als Helfer eintragen. Es gibt bewusst keine feste Obergrenze.</p><div class="grid" id="helperGrid"></div></section>
+<section class="panel" id="buffet"><h2>🥗 Buffet</h2><p>Für die Buffetergänzungen nutzen wir weiterhin unsere bestehende Mitbringliste.</p><a id="buffetLink" class="linkbtn external" href="#" target="_blank" rel="noopener">Zur Mitbringliste ↗</a><p class="small" id="buffetHint">Den Link zur bestehenden Bring-a-Bottle-Liste kannst du oben im Code bei <code>BUFFET_URL</code> eintragen.</p></section>
+<p class="footer">Einträge werden online gespeichert und auf allen Geräten live aktualisiert.</p></main>
+<dialog id="dlg"><form class="modal" id="form"><h2 id="dlgTitle">Eintragen</h2><p id="dlgText"></p><label for="person">Dein Name</label><input id="person" maxlength="50" autocomplete="name" required placeholder="Vor- und Nachname"><div class="modal-actions"><button type="button" class="secondary" id="cancel">Abbrechen</button><button type="submit" class="join" id="save">Eintragen</button></div></form></dialog>
 <script type="module">
-  // 1) Firebase-Projekt anlegen: https://console.firebase.google.com/
-  // 2) Web-App registrieren und DIESE sechs Werte ersetzen.
-  const firebaseConfig = {
-    apiKey: "AIzaSyDNzHVKjyzwycObi34UUV8KQX9B6KsTR8o",
-    authDomain: "theckendienst.firebaseapp.com",
-    projectId: "theckendienst",
-    storageBucket: "theckendienst.firebasestorage.app",
-    messagingSenderId: "657028247802",
-    appId: "1:657028247802:web:3a297f6287353b71ef5943"
-    };
-
-  const shifts = [
-    { id: "1500", label: "15:00–16:30 Uhr" },
-    { id: "1630", label: "16:30–18:00 Uhr" },
-    { id: "1800", label: "18:00–19:30 Uhr" },
-    { id: "1930", label: "19:30–21:00 Uhr" },
-    { id: "2100", label: "21:00–22:30 Uhr" },
-    { id: "2230", label: "22:30–00:00 Uhr" },
-    { id: "0000", label: "00:00–01:30 Uhr" }
-  ];
-  const EVENT_ID = "thekendienst";
-
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
-  import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
-  import { getFirestore, collection, doc, onSnapshot, runTransaction, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
-
-  const grid = document.querySelector('#shiftGrid');
-  const statusEl = document.querySelector('#status');
-  const setupEl = document.querySelector('#setup');
-  const dialog = document.querySelector('#joinDialog');
-  const form = document.querySelector('#joinForm');
-  const nameInput = document.querySelector('#personName');
-  const saveBtn = document.querySelector('#saveBtn');
-  let selected = null, auth, db, user = null, entries = new Map();
-
-  const configured = !Object.values(firebaseConfig).some(v => v.includes('HIER_EINTRAGEN'));
-  function setStatus(text, type='wait') { statusEl.innerHTML = `<span class="dot ${type}"></span><span>${escapeHtml(text)}</span>`; }
-  function escapeHtml(s='') { return String(s).replace(/[&<>'"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c])); }
-
-  function render() {
-    grid.innerHTML = shifts.map(shift => {
-      const slots = [1,2].map(no => {
-        const key = `${shift.id}_${no}`, e = entries.get(key), mine = e && user && e.uid === user.uid;
-        if (e) return `<div class="slot taken"><div class="small">Platz ${no}</div><div class="name">${escapeHtml(e.name)}</div>${mine ? `<button class="leave" data-leave="${key}">Austragen</button>` : ''}</div>`;
-        return `<div class="slot"><div class="small">Platz ${no}</div><div class="name">Noch frei</div><button class="join" data-join="${key}" ${!user?'disabled':''}>Eintragen</button></div>`;
-      }).join('');
-      const used = [1,2].filter(n => entries.has(`${shift.id}_${n}`)).length;
-      return `<article class="shift"><div class="shifthead"><div class="time">${shift.label}</div><div class="count">${used} von 2 belegt</div></div><div class="slots">${slots}</div></article>`;
-    }).join('');
-  }
-
-  grid.addEventListener('click', async ev => {
-    const joinKey = ev.target.dataset.join, leaveKey = ev.target.dataset.leave;
-    if (joinKey) {
-      const [shiftId, slot] = joinKey.split('_');
-      selected = { key: joinKey, shiftId, slot };
-      document.querySelector('#dialogTime').textContent = `${shifts.find(s=>s.id===shiftId).label}, Platz ${slot}`;
-      nameInput.value = localStorage.getItem('thekendienst_name') || '';
-      dialog.showModal(); setTimeout(()=>nameInput.focus(),50);
-    }
-    if (leaveKey) await leaveSlot(leaveKey, ev.target);
-  });
-  document.querySelector('#cancelBtn').addEventListener('click',()=>dialog.close());
-  form.addEventListener('submit', async ev => {
-    ev.preventDefault();
-    const name = nameInput.value.trim().replace(/\s+/g,' ');
-    if (name.length < 2 || !selected) return;
-    saveBtn.disabled = true;
-    try {
-      const ref = doc(db, 'events', EVENT_ID, 'slots', selected.key);
-      await runTransaction(db, async tx => {
-        const snap = await tx.get(ref);
-        if (snap.exists()) throw new Error('Dieser Platz wurde gerade schon belegt.');
-        tx.set(ref, { name, uid:user.uid, shiftId:selected.shiftId, slot:Number(selected.slot), createdAt:serverTimestamp() });
-      });
-      localStorage.setItem('thekendienst_name', name); dialog.close();
-    } catch(err) { alert(err.message || 'Eintragen nicht möglich.'); }
-    finally { saveBtn.disabled = false; }
-  });
-
-  async function leaveSlot(key, button) {
-    if (!confirm('Möchtest du dich aus dieser Schicht austragen?')) return;
-    button.disabled = true;
-    try {
-      const ref = doc(db, 'events', EVENT_ID, 'slots', key);
-      await runTransaction(db, async tx => {
-        const snap = await tx.get(ref);
-        if (!snap.exists()) return;
-        if (snap.data().uid !== user.uid) throw new Error('Du kannst nur deinen eigenen Eintrag löschen.');
-        tx.delete(ref);
-      });
-    } catch(err) { alert(err.message || 'Austragen nicht möglich.'); button.disabled=false; }
-  }
-
-  render();
-  if (!configured) { setupEl.style.display='block'; setStatus('Firebase-Konfiguration fehlt', 'bad'); }
-  else {
-    try {
-      const app = initializeApp(firebaseConfig); auth = getAuth(app); db = getFirestore(app);
-      onAuthStateChanged(auth, async u => {
-        user = u;
-        if (!u) { try { await signInAnonymously(auth); } catch(e) { setStatus('Anmeldung fehlgeschlagen: '+e.message,'bad'); } return; }
-        setStatus('Online verbunden – Änderungen werden live gespeichert','ok'); render();
-        onSnapshot(collection(db,'events',EVENT_ID,'slots'), snap => {
-          entries.clear(); snap.forEach(d=>entries.set(d.id,d.data())); render();
-        }, err => setStatus('Keine Datenbankverbindung: '+err.message,'bad'));
-      });
-    } catch(e) { setStatus('Firebase-Fehler: '+e.message,'bad'); }
-  }
-</script>
-</body>
-</html>
+const firebaseConfig={apiKey:"HIER_EINTRAGEN",authDomain:"HIER_EINTRAGEN.firebaseapp.com",projectId:"HIER_EINTRAGEN",storageBucket:"HIER_EINTRAGEN.firebasestorage.app",messagingSenderId:"HIER_EINTRAGEN",appId:"HIER_EINTRAGEN"};
+const BUFFET_URL=""; // Hier den vollständigen Link zu Bring-a-Bottle einsetzen.
+const EVENT_ID="thekendienst";
+const shifts=[{id:"1500",label:"15:00–16:30 Uhr"},{id:"1630",label:"16:30–18:00 Uhr"},{id:"1800",label:"18:00–19:30 Uhr"},{id:"1930",label:"19:30–21:00 Uhr"},{id:"2100",label:"21:00–22:30 Uhr"},{id:"2230",label:"22:30–00:00 Uhr"},{id:"0000",label:"00:00–01:30 Uhr"}];
+const helperAreas=[
+{id:"aufbau_freitag",label:"Freitag, 06.11. · 15:00–17:00 Uhr",max:4,description:"Getränke schleppen sowie Tische und Stühle stellen – vor dem St.-Martins-Umzug."},
+{id:"aufbau_samstag",label:"Samstag, 07.11. · 10:00–12:00 Uhr",max:4,description:"Gemeinsam dekorieren und die Feier vorbereiten."},
+{id:"abbau_sonntag",label:"Sonntag, 08.11. · 14:00–16:00 Uhr",max:6,description:"Alles wieder abbauen, aufräumen und das Bootshaus durchfegen."}
+];
+import{initializeApp}from"https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";import{getAuth,signInAnonymously,onAuthStateChanged}from"https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";import{getFirestore,collection,doc,onSnapshot,runTransaction,serverTimestamp,query,where}from"https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
+const $=s=>document.querySelector(s),esc=s=>String(s??'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));let db,auth,user=null,slots=new Map(),helpers=new Map(),action=null;
+if(BUFFET_URL){$('#buffetLink').href=BUFFET_URL;$('#buffetHint').style.display='none'}else{$('#buffetLink').style.display='none'}
+function status(t,c=''){ $('#status').innerHTML=`<span class="dot ${c}"></span>${esc(t)}` }
+function renderShifts(){ $('#shiftGrid').innerHTML=shifts.map(s=>{let used=0;let ss=[1,2].map(n=>{let k=`${s.id}_${n}`,e=slots.get(k),mine=e&&user&&e.uid===user.uid;if(e)used++;return e?`<div class="slot taken"><span class="small">Platz ${n}</span><span class="name">${esc(e.name)}</span>${mine?`<button class="leave" data-leave-slot="${k}">Austragen</button>`:''}</div>`:`<div class="slot"><span class="small">Platz ${n}</span><span class="name">Noch frei</span><button class="join" data-slot="${k}" ${!user?'disabled':''}>Ich übernehme die Schicht</button></div>`}).join('');return `<div class="shift"><div class="head"><span class="time">${s.label}</span><span class="count">${used} von 2 belegt</span></div><div class="slots">${ss}</div></div>`}).join('') }
+function renderHelpers(){ $('#helperGrid').innerHTML=helperAreas.map(a=>{let arr=[...helpers.entries()].filter(([k,e])=>e.areaId===a.id);let mine=arr.some(([k,e])=>user&&e.uid===user.uid);let full=arr.length>=a.max;let chips=arr.length?arr.map(([k,e])=>`<span class="chip">${esc(e.name)}${user&&e.uid===user.uid?` <button class="leave" style="padding:3px 7px" data-leave-helper="${k}">×</button>`:''}</span>`).join(''):'<span class="small">Noch niemand eingetragen</span>';return `<div class="helper"><div class="head"><span class="time">${a.label}</span><span class="count">${full?'Vollständig besetzt ✓':`${arr.length} von ${a.max} Helfern`}</span></div><p class="sub" style="margin:8px 0 4px">${esc(a.description)}</p><div class="helper-list">${chips}</div><button class="join" data-helper="${a.id}" ${(!user||full||mine)?'disabled':''}>${mine?'Du bist eingetragen':full?'Vollständig besetzt':'Ich helfe mit'}</button></div>`}).join('') }
+function openDlg(kind,id,label){action={kind,id};$('#dlgTitle').textContent=kind==='slot'?'Für Thekendienst eintragen':'Als Helfer eintragen';$('#dlgText').textContent=label;$('#person').value=localStorage.getItem('party_name')||'';$('#dlg').showModal();setTimeout(()=>$('#person').focus(),30)}
+$('#shiftGrid').onclick=e=>{let k=e.target.dataset.slot;if(k){let sid=k.split('_')[0];openDlg('slot',k,shifts.find(x=>x.id===sid).label)}if(e.target.dataset.leaveSlot)leave('slot',e.target.dataset.leaveSlot)};$('#helperGrid').onclick=e=>{let a=e.target.dataset.helper;if(a)openDlg('helper',a,helperAreas.find(x=>x.id===a).label);if(e.target.dataset.leaveHelper)leave('helper',e.target.dataset.leaveHelper)};$('#cancel').onclick=()=>$('#dlg').close();
+$('#form').onsubmit=async e=>{e.preventDefault();let name=$('#person').value.trim().replace(/\s+/g,' ');if(name.length<2||!action)return;$('#save').disabled=true;try{if(action.kind==='slot'){let ref=doc(db,'events',EVENT_ID,'slots',action.id);await runTransaction(db,async tx=>{let s=await tx.get(ref);if(s.exists())throw Error('Dieser Platz wurde gerade schon belegt.');let [shiftId,slot]=action.id.split('_');tx.set(ref,{name,uid:user.uid,shiftId,slot:Number(slot),createdAt:serverTimestamp()})})}else{let id=`${action.id}_${user.uid}`;let ref=doc(db,'events',EVENT_ID,'helpers',id);await runTransaction(db,async tx=>{let s=await tx.get(ref);if(s.exists())throw Error('Du bist hier bereits eingetragen.');let area=helperAreas.find(a=>a.id===action.id);let q=query(collection(db,'events',EVENT_ID,'helpers'),where('areaId','==',action.id)); /* UI limit; rules enforce allowed areas, transaction prevents duplicate per user */ tx.set(ref,{name,uid:user.uid,areaId:action.id,createdAt:serverTimestamp()})})}localStorage.setItem('party_name',name);$('#dlg').close()}catch(x){alert(x.message||'Eintragen nicht möglich.')}finally{$('#save').disabled=false}}
+async function leave(kind,id){if(!confirm('Möchtest du dich wirklich austragen?'))return;let col=kind==='slot'?'slots':'helpers';try{let ref=doc(db,'events',EVENT_ID,col,id);await runTransaction(db,async tx=>{let s=await tx.get(ref);if(!s.exists())return;if(s.data().uid!==user.uid)throw Error('Du kannst nur deinen eigenen Eintrag löschen.');tx.delete(ref)})}catch(x){alert(x.message||'Austragen nicht möglich.')}}
+renderShifts();renderHelpers();let configured=!Object.values(firebaseConfig).some(v=>v.includes('HIER_EINTRAGEN'));if(!configured){$('#setup').style.display='block';status('Firebase-Konfiguration fehlt','bad')}else{try{let app=initializeApp(firebaseConfig);auth=getAuth(app);db=getFirestore(app);onAuthStateChanged(auth,async u=>{user=u;if(!u){try{await signInAnonymously(auth)}catch(x){status('Anmeldung fehlgeschlagen: '+x.message,'bad')}return}status('Online verbunden – Änderungen werden live gespeichert','ok');renderShifts();renderHelpers();onSnapshot(collection(db,'events',EVENT_ID,'slots'),s=>{slots.clear();s.forEach(d=>slots.set(d.id,d.data()));renderShifts()},x=>status('Datenbankfehler: '+x.message,'bad'));onSnapshot(collection(db,'events',EVENT_ID,'helpers'),s=>{helpers.clear();s.forEach(d=>helpers.set(d.id,d.data()));renderHelpers()},x=>status('Datenbankfehler: '+x.message,'bad'))})}catch(x){status('Firebase-Fehler: '+x.message,'bad')}}
+</script></body></html>
