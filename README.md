@@ -1,2 +1,2 @@
-# Theckendienst
-Für Feier
+# Thekendienst + Helfer
+Für Feier im Bootshaus
