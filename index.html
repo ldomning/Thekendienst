@@ -11,7 +11,7 @@
 <div class="setup" id="setup"><strong>Firebase-Konfiguration fehlt.</strong> Übernimm in <code>firebaseConfig</code> die sechs Werte aus deiner derzeit funktionierenden index.html.</div>
 <div class="status" id="status"><span class="dot"></span>Verbindung wird hergestellt …</div>
 <section class="panel" id="theke"><h2>🍻 Thekendienst</h2><p class="sub"><strong>1,5 Stunden · 2 Personen je Schicht</strong></p><ul class="tasks"><li>Getränke ausgeben und bei Bedarf nachfüllen</li><li>Nach leeren Flaschen und benutzten Gläsern schauen</li><li>Spülmaschine befüllen, starten und ausräumen</li><li>Die Theke ordentlich halten und insgesamt ein wenig die Augen offen halten</li><li>Die nächste Schicht kurz einweisen und offene Punkte übergeben</li></ul><p class="note"><strong>Bitte tragt euch selbst ein.</strong> Falls etwas dazwischenkommt, könnt ihr euch über dasselbe Gerät wieder austragen.</p><div class="grid" id="shiftGrid"></div></section>
-<section class="panel" id="helfer"><h2>💪 Auf- & Abbau</h2><p class="sub">Hier kannst du dich unkompliziert als Helfer eintragen. Es gibt bewusst keine feste Obergrenze.</p><div class="grid" id="helperGrid"></div></section>
+<section class="panel" id="helfer"><h2>💪 Auf- & Abbau</h2><p class="sub">Hier kannst du dich unkompliziert als Helfer eintragen.</p><div class="grid" id="helperGrid"></div></section>
 <section class="panel" id="buffet"><h2>🥗 Buffet</h2><p>Für die Buffetergänzungen nutzen wir weiterhin unsere bestehende Mitbringliste.</p><a id="buffetLink" class="linkbtn external" href="#" target="_blank" rel="noopener">Zur Mitbringliste ↗</a><p class="small" id="buffetHint">Den Link zur bestehenden Bring-a-Bottle-Liste kannst du oben im Code bei <code>BUFFET_URL</code> eintragen.</p></section>
 <p class="footer">Einträge werden online gespeichert und auf allen Geräten live aktualisiert.</p></main>
 <dialog id="dlg"><form class="modal" id="form"><h2 id="dlgTitle">Eintragen</h2><p id="dlgText"></p><label for="person">Dein Name</label><input id="person" maxlength="50" autocomplete="name" required placeholder="Vor- und Nachname"><div class="modal-actions"><button type="button" class="secondary" id="cancel">Abbrechen</button><button type="submit" class="join" id="save">Eintragen</button></div></form></dialog>
@@ -28,7 +28,7 @@ const BUFFET_URL="https://bringabottle.de/list/ae6c0385-f2d0-4445-99f1-da0ad0332
 const EVENT_ID="thekendienst";
 const shifts=[{id:"1500",label:"15:00–16:30 Uhr"},{id:"1630",label:"16:30–18:00 Uhr"},{id:"1800",label:"18:00–19:30 Uhr"},{id:"1930",label:"19:30–21:00 Uhr"},{id:"2100",label:"21:00–22:30 Uhr"},{id:"2230",label:"22:30–00:00 Uhr"},{id:"0000",label:"00:00–01:30 Uhr"}];
 const helperAreas=[
-{id:"aufbau_freitag",label:"Freitag, 06.11. · 15:00–17:00 Uhr",max:4,description:"Getränke schleppen sowie Tische und Stühle stellen – vor dem St.-Martins-Umzug."},
+{id:"aufbau_freitag",label:"Freitag, 06.11. · 15:00–17:00 Uhr",max:4,description:"Getränke ins Kühlhaus sowie Tische und Stühle stellen – vor dem St.-Martins-Umzug."},
 {id:"aufbau_samstag",label:"Samstag, 07.11. · 10:00–12:00 Uhr",max:4,description:"Gemeinsam dekorieren und die Feier vorbereiten."},
 {id:"abbau_sonntag",label:"Sonntag, 08.11. · 14:00–16:00 Uhr",max:6,description:"Alles wieder abbauen, aufräumen und das Bootshaus durchfegen."}
 ];
